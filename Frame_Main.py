@@ -66,7 +66,6 @@ class Frame_Main(wx.Frame):
         event.Skip()
 
     def button_exit_click(self, event):  # wxGlade: Frame_Main.<event_handler>
-        print("Event handler 'button_exit_click' not implemented!")
-        event.Skip()
+        self.Close(True)
 
 # end of class Frame_Main
