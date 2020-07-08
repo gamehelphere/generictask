@@ -13,7 +13,6 @@ import wx
 # begin wxGlade: extracode
 # end wxGlade
 
-
 class Frame_Tasklist(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: Frame_Tasklist.__init__
@@ -49,6 +48,15 @@ class Frame_Tasklist(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.button_change_task, self.button_change)
         self.Bind(wx.EVT_BUTTON, self.button_remove_task, self.button_remove)
         # end wxGlade
+
+    """
+    Setter method to get an instance of Frame_Main. The Frame_Tasklist instance will use it to
+    get back to the main frame, Frame_Main.
+    """
+
+    def set_Frame_Main(self, givenFrameMain):
+        
+        self.frame_main = givenFrameMain
 
     def __set_properties(self):
         # begin wxGlade: Frame_Tasklist.__set_properties
@@ -90,8 +98,11 @@ class Frame_Tasklist(wx.Frame):
         event.Skip()
 
     def menuitem_exit_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        print("Event handler 'menuitem_exit_click' not implemented!")
-        event.Skip()
+        #print("Event handler 'menuitem_exit_click' not implemented!")
+        #event.Skip()
+
+        self.frame_main.Show(True)
+        self.Hide()
 
     def menuitem_help_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         print("Event handler 'menuitem_help_click' not implemented!")
