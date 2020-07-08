@@ -13,6 +13,8 @@ import wx
 # begin wxGlade: extracode
 # end wxGlade
 
+from Dialog_About import Dialog_About
+from Frame_Tasklist import Frame_Tasklist
 
 class Frame_Main(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -31,6 +33,20 @@ class Frame_Main(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.button_about_click, self.button_about)
         self.Bind(wx.EVT_BUTTON, self.button_exit_click, self.button_exit)
         # end wxGlade
+        
+        self.__init_custom()
+        
+
+    """
+    Instead of putting too much extra code in the constructor, I made a method to call my own code.
+    This will be called by the constructor.
+    """
+
+    def __init_custom(self):
+        
+        self.dialog_about = Dialog_About(self)
+        self.frame_tasklist = Frame_Tasklist(self)
+        self.frame_tasklist.set_Frame_Main(self)
 
     def __set_properties(self):
         # begin wxGlade: Frame_Main.__set_properties
@@ -58,12 +74,22 @@ class Frame_Main(wx.Frame):
         # end wxGlade
 
     def button_start_click(self, event):  # wxGlade: Frame_Main.<event_handler>
-        print("Event handler 'button_start_click' not implemented!")
-        event.Skip()
+
+        """
+        Open the main star of the app: The instance of Frame_Tasklist!
+        """
+
+        self.frame_tasklist.Show(True)
+        self.Show(False)
 
     def button_about_click(self, event):  # wxGlade: Frame_Main.<event_handler>
-        print("Event handler 'button_about_click' not implemented!")
-        event.Skip()
+
+        """
+        Make the dialog box modal so all attention is given to it. I wrote a close window code in
+        the Dialog_About instance and it is being respected by the instance of this Frame_Main.
+        """
+
+        self.dialog_about.ShowModal()
 
     def button_exit_click(self, event):  # wxGlade: Frame_Main.<event_handler>
         self.Close(True)

@@ -46,7 +46,9 @@ class Dialog_About(wx.Dialog):
         # end wxGlade
 
     def button_close_click(self, event):  # wxGlade: Dialog_About.<event_handler>
-        print("Event handler 'button_close_click' not implemented!")
-        event.Skip()
+        #print("Event handler 'button_close_click' not implemented!")
+        #event.Skip()
+
+        self.Close(True)
 
 # end of class Dialog_About
