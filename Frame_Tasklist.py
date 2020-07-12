@@ -13,6 +13,8 @@ import wx
 # begin wxGlade: extracode
 # end wxGlade
 
+from Dialog_Add_Edit_Task import Dialog_Add_Edit_Task
+
 class Frame_Tasklist(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: Frame_Tasklist.__init__
@@ -48,6 +50,17 @@ class Frame_Tasklist(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.button_change_task, self.button_change)
         self.Bind(wx.EVT_BUTTON, self.button_remove_task, self.button_remove)
         # end wxGlade
+
+        self.__init_custom()
+
+    """
+    Instead of putting too much extra code in the constructor, I made a method to call my own code.
+    This will be called by the constructor.
+    """
+
+    def __init_custom(self):
+        
+        self.dialog_add_edit_task = Dialog_Add_Edit_Task(self)
 
     """
     Setter method to get an instance of Frame_Main. The Frame_Tasklist instance will use it to
@@ -86,12 +99,16 @@ class Frame_Tasklist(wx.Frame):
         event.Skip()
 
     def menuitem_addtask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        print("Event handler 'menuitem_addtask_click' not implemented!")
-        event.Skip()
+        #print("Event handler 'menuitem_addtask_click' not implemented!")
+        #event.Skip()
+
+        self.dialog_add_edit_task.ShowModal()
 
     def menuitem_changetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        print("Event handler 'menuitem_changetask_click' not implemented!")
-        event.Skip()
+        #print("Event handler 'menuitem_changetask_click' not implemented!")
+        #event.Skip()
+
+        self.dialog_add_edit_task.ShowModal()
 
     def menuitem_removetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         print("Event handler 'menuitem_removetask_click' not implemented!")
@@ -109,12 +126,16 @@ class Frame_Tasklist(wx.Frame):
         event.Skip()
 
     def button_add_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        print("Event handler 'button_add_click' not implemented!")
-        event.Skip()
+        #print("Event handler 'button_add_click' not implemented!")
+        #event.Skip()
+        
+        self.dialog_add_edit_task.ShowModal()
 
     def button_change_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        print("Event handler 'button_change_task' not implemented!")
-        event.Skip()
+        #print("Event handler 'button_change_task' not implemented!")
+        #event.Skip()
+
+        self.dialog_add_edit_task.ShowModal()
 
     def button_remove_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         print("Event handler 'button_remove_task' not implemented!")

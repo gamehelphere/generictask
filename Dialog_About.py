@@ -13,6 +13,7 @@ import wx
 # begin wxGlade: extracode
 # end wxGlade
 
+from Dialog_Add_Edit_Task import Dialog_Add_Edit_Task
 
 class Dialog_About(wx.Dialog):
     def __init__(self, *args, **kwds):
