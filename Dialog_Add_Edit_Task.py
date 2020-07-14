@@ -51,6 +51,10 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         grid_sizer_1 = wx.GridSizer(2, 2, 0, 0)
         sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
         label_operation = wx.StaticText(self, wx.ID_ANY, "label_1adsfasfasfasdfadsadfs")
+        
+        # Get a reference for this title statictext widget.
+        
+        self.label_operation = label_operation
         label_operation.SetFont(wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
         sizer_5.Add(label_operation, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
         label_taskdescription = wx.StaticText(self, wx.ID_ANY, "Task Description")
@@ -66,8 +70,12 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         sizer_5.Add(grid_sizer_1, 1, wx.EXPAND, 0)
         sizer_5.Add(self.checkbox_done, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         label_status = wx.StaticText(self, wx.ID_ANY, "label_1")
+        
+        # Get a reference to the status statictext widget.
+        
+        self.label_status = label_status
         label_status.SetFont(wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
-        sizer_5.Add(label_status, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+        sizer_5.Add(label_status, 0, wx.ALIGN_LEFT | wx.ALL, 5)
         sizer_6.Add(self.button_ok, 0, 0, 0)
         sizer_6.Add(self.button_cancel, 0, 0, 0)
         sizer_5.Add(sizer_6, 1, wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -76,15 +84,25 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         # end wxGlade
 
     def button_ok_click(self, event):  # wxGlade: Dialog_Add_Edit_Task.<event_handler>
-        #print("Event handler 'button_ok_click' not implemented!")
-        #event.Skip()
 
-        self.Close()
+        if(self.text_ctrl_taskdescription.GetLineLength(0) > 0): 
+            self.Close()
+        else:
+            self.label_status.SetLabel(">>> Task Description is empty. <<<")
 
     def button_cancel_click(self, event):  # wxGlade: Dialog_Add_Edit_Task.<event_handler>
-        #print("Event handler 'button_cancel_click' not implemented!")
-        #event.Skip()
 
         self.Close()
+
+    def set_operation(self, given):
+        self.operation = given
+        self.label_operation.SetLabel(given)
+        
+        """
+        Make sure to clear the current text value of the status text widget to make it look better.
+        If a previous status is present the user will become confused.
+        """
+        
+        self.label_status.SetLabel("")
 
 # end of class Dialog_Add_Edit_Task

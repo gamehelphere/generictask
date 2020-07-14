@@ -99,15 +99,13 @@ class Frame_Tasklist(wx.Frame):
         event.Skip()
 
     def menuitem_addtask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        #print("Event handler 'menuitem_addtask_click' not implemented!")
-        #event.Skip()
-
+        
+        self.dialog_add_edit_task.set_operation("Add new task entry")
         self.dialog_add_edit_task.ShowModal()
 
     def menuitem_changetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        #print("Event handler 'menuitem_changetask_click' not implemented!")
-        #event.Skip()
-
+        
+        self.dialog_add_edit_task.set_operation("Change task entry")
         self.dialog_add_edit_task.ShowModal()
 
     def menuitem_removetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
@@ -126,19 +124,32 @@ class Frame_Tasklist(wx.Frame):
         event.Skip()
 
     def button_add_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        #print("Event handler 'button_add_click' not implemented!")
-        #event.Skip()
         
+        self.dialog_add_edit_task.set_operation("Add new task entry")
         self.dialog_add_edit_task.ShowModal()
+        self.add_entry()
+        
 
     def button_change_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        #print("Event handler 'button_change_task' not implemented!")
-        #event.Skip()
-
+        
+        self.dialog_add_edit_task.set_operation("Change task entry")
         self.dialog_add_edit_task.ShowModal()
 
     def button_remove_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         print("Event handler 'button_remove_task' not implemented!")
         event.Skip()
+
+    """
+    The routine to add the data in the List widget. The code might become big later and putting
+    them in a method will be wise.
+    """
+
+    def add_entry(self):
+        
+        totalEntries = self.list_ctrl_tasks.GetItemCount() + 1
+        if(totalEntries > 0):
+            totalEntries = totalEntries - 1
+        self.list_ctrl_tasks.InsertItem(totalEntries, self.dialog_add_edit_task.text_ctrl_taskdescription.GetLineText(0))
+        
 
 # end of class Frame_Tasklist
