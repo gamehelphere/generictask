@@ -149,7 +149,20 @@ class Frame_Tasklist(wx.Frame):
         totalEntries = self.list_ctrl_tasks.GetItemCount() + 1
         if(totalEntries > 0):
             totalEntries = totalEntries - 1
-        self.list_ctrl_tasks.InsertItem(totalEntries, self.dialog_add_edit_task.text_ctrl_taskdescription.GetLineText(0))
+        
+        strTotalEntries = str(totalEntries)
+        
+        self.list_ctrl_tasks.InsertItem(totalEntries, strTotalEntries)
+        
+        # Put a row using SetItem() for the remaining columns.
+        
+        # For the task description.
+        
+        self.list_ctrl_tasks.SetItem(totalEntries, 1, self.dialog_add_edit_task.text_ctrl_taskdescription.GetLineText(0))
+        
+        # For the status.
+        
+        self.list_ctrl_tasks.SetItem(totalEntries, 2, "No")
         
 
 # end of class Frame_Tasklist
