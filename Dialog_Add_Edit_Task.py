@@ -16,6 +16,7 @@ Must Do:
 
 1. Reference to Frame_Tasklist frame.
 2. Getter and setter methods to pass data from Frame_Tasklist frame.
+3. Put timestamp in Date boxes like in making an entry or marking entry as done.
 
 """
 class Dialog_Add_Edit_Task(wx.Dialog):
