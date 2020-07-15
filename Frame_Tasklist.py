@@ -13,6 +13,14 @@ import wx
 # begin wxGlade: extracode
 # end wxGlade
 
+"""
+
+Must Do:
+
+1. Save and load data from SQLite database.
+
+"""
+
 from Dialog_Add_Edit_Task import Dialog_Add_Edit_Task
 
 class Frame_Tasklist(wx.Frame):
@@ -75,8 +83,8 @@ class Frame_Tasklist(wx.Frame):
         # begin wxGlade: Frame_Tasklist.__set_properties
         self.SetTitle("Task Management")
         self.Hide()
-        self.list_ctrl_tasks.AppendColumn("Task ID", format=wx.LIST_FORMAT_LEFT, width=133)
-        self.list_ctrl_tasks.AppendColumn("Task Description", format=wx.LIST_FORMAT_LEFT, width=582)
+        self.list_ctrl_tasks.AppendColumn("Task ID", format=wx.LIST_FORMAT_LEFT, width=1)
+        self.list_ctrl_tasks.AppendColumn("Task Description", format=wx.LIST_FORMAT_LEFT, width=782)
         self.list_ctrl_tasks.AppendColumn("Status", format=wx.LIST_FORMAT_LEFT, width=140)
         # end wxGlade
 
@@ -102,6 +110,7 @@ class Frame_Tasklist(wx.Frame):
         
         self.dialog_add_edit_task.set_operation("Add new task entry")
         self.dialog_add_edit_task.ShowModal()
+        self.add_entry()
 
     def menuitem_changetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         
@@ -136,8 +145,55 @@ class Frame_Tasklist(wx.Frame):
         self.dialog_add_edit_task.ShowModal()
 
     def button_remove_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
-        print("Event handler 'button_remove_task' not implemented!")
-        event.Skip()
+        
+        self.remove_task()
+
+
+    """
+    Main logic to remove a task. Putting it here will make the button_remove_task method cleaner.
+    """
+
+    def remove_task(self):
+        
+        focusedItem = self.list_ctrl_tasks.GetFocusedItem()
+        print("Ang napili ay " + str(focusedItem))
+        if(focusedItem != -1):
+            if(self.list_ctrl_tasks.IsSelected(focusedItem)):
+                print("Focused!")
+                dialog_inform_remove = wx.MessageDialog(self, "Are you sure you want to remove this entry?", "Warning", wx.YES|wx.NO|wx.ICON_WARNING)
+                result = dialog_inform_remove.ShowModal()   
+                if result == wx.ID_YES:
+                    
+                    """
+                    Finally remove selected entry. No turning back at this point!
+                    """
+                    
+                    self.list_ctrl_tasks.DeleteItem(focusedItem)
+                    
+                    dialog_inform_remove_final = wx.MessageDialog(self, "Entry removed successfully.", "Information", wx.OK_DEFAULT|wx.ICON_INFORMATION)
+                    dialog_inform_remove_final.ShowModal()   
+                    dialog_inform_remove_final.Destroy()                     
+                
+                dialog_inform_remove.Destroy()
+                 
+            else:
+                print("Non-focused.")
+                print("Please select an item to remove.")
+                dialog_inform_remove = wx.MessageDialog(self, "No entry selected to remove.", "Information", wx.OK|wx.CENTRE|wx.ICON_QUESTION)
+                dialog_inform_remove.ShowModal()       
+                dialog_inform_remove.Destroy()         
+        else:
+            print("Please select an item to remove.")
+                        
+            dialog_inform_remove = wx.MessageDialog(self, "No entry selected to remove.", "Information", wx.OK|wx.CENTRE|wx.ICON_QUESTION)
+            dialog_inform_remove.ShowModal()
+            
+            """
+            Dialog boxes must be removed from running memory to save system memory. It might not be
+            useful for systems with lots of memory, but can be in older systems.
+            """            
+            
+            dialog_inform_remove.Destory()        
 
     """
     The routine to add the data in the List widget. The code might become big later and putting
