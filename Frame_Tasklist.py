@@ -18,6 +18,7 @@ import wx
 Must Do:
 
 1. Save and load data from SQLite database.
+2. Maybe a text file would be better because an SQL database might be too much for this app.
 
 """
 

@@ -16,9 +16,14 @@ Must Do:
 
 1. Reference to Frame_Tasklist frame.
 2. Getter and setter methods to pass data from Frame_Tasklist frame.
-3. Put timestamp in Date boxes like in making an entry or marking entry as done.
+3. Put timestamp in Date boxes like in making an entry or marking entry as done. = Done!!
+4. Change 24-hour format to 12-hour format in timestamp values.
+5. Change sizes of the date boxes.
 
 """
+
+from datetime import datetime
+
 class Dialog_Add_Edit_Task(wx.Dialog):
     def __init__(self, *args, **kwds):
         # begin wxGlade: Dialog_Add_Edit_Task.__init__
@@ -63,9 +68,19 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         sizer_7.Add(self.text_ctrl_taskdescription, 1, wx.EXPAND, 0)
         sizer_5.Add(sizer_7, 1, wx.EXPAND, 0)
         label_datecreated = wx.StaticText(self, wx.ID_ANY, "Date Created")
+                
+        # Get a reference for the datecreated widget.
+        
+        self.label_datecreated = label_datecreated
+        
         grid_sizer_1.Add(label_datecreated, 0, wx.ALIGN_RIGHT | wx.ALL, 10)
         grid_sizer_1.Add(self.text_ctrl_datecreated, 0, 0, 0)
         label_datedone = wx.StaticText(self, wx.ID_ANY, "Date Done")
+        
+        # Get a reference for the label_datedone widget.
+        
+        self.label_datedone = label_datedone
+        
         grid_sizer_1.Add(label_datedone, 0, wx.ALIGN_RIGHT | wx.ALL, 10)
         grid_sizer_1.Add(self.text_ctrl_datedone, 0, 0, 0)
         sizer_5.Add(grid_sizer_1, 1, wx.EXPAND, 0)
@@ -105,5 +120,37 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         """
         
         self.label_status.SetLabel("")
+        
+        """
+        Do the necessary actions to hide or show certain widgets depending on the given operation.
+        """
 
+        self.text_ctrl_datecreated.SetEditable(False)
+        self.text_ctrl_datedone.SetEditable(False)
+
+        if given == 'Add new task entry':
+            self.label_datedone.Hide()
+            self.text_ctrl_datedone.Hide()
+            self.checkbox_done.Hide()
+            
+            """
+            datetime will let me get the current timestamp from the running system and use it
+            to make the date and time values for the date created box. I will use the same 
+            routine for the date done box.
+            
+            I need to make the time in 12-hour format because it is easier to understand than the
+            24-hour format.
+            """
+            
+            dateToday = datetime.today()
+            strDateToday = dateToday.strftime("%m-%d-%Y %H:%M")
+            self.text_ctrl_datecreated.ChangeValue(strDateToday)
+            
+        elif given == 'Change task entry':
+            self.label_datecreated.Show()
+            self.text_ctrl_datecreated.Show()
+            self.label_datedone.Show()
+            self.text_ctrl_datedone.Show()            
+            self.checkbox_done.Show()
+            
 # end of class Dialog_Add_Edit_Task
