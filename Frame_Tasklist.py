@@ -203,6 +203,22 @@ class Frame_Tasklist(wx.Frame):
 
     def add_entry(self):
         
+        """
+        File operations underway! A flat or text file is enough for this application because an SQLite
+        DB is too much.
+        
+        The algorithm to replace these lines is
+        
+        1. Retrieve all data from the ListCtrl and put it in a nested list.
+        2. Add the new data from Dialog_Add_Edit_Task in the nested list.
+        3. Overwrite the save file if existing or make one in the same directory.
+        4. Save the contents of the nested list in the file.
+        5. Clear the current contents of the ListCtrl.
+        6. Load the text file and put the contents in the ListCtrl.
+        
+        It may appear that the algorithm is wasting cycles and a database would be better, but
+        I still believe a flat file is enough for this small program. :)
+        
         totalEntries = self.list_ctrl_tasks.GetItemCount() + 1
         if(totalEntries > 0):
             totalEntries = totalEntries - 1
@@ -219,7 +235,8 @@ class Frame_Tasklist(wx.Frame):
         
         # For the status.
         
-        self.list_ctrl_tasks.SetItem(totalEntries, 2, "No")
+        self.list_ctrl_tasks.SetItem(totalEntries, 2, "On-going.")
         
+        """
 
 # end of class Frame_Tasklist

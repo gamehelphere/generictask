@@ -14,11 +14,11 @@ import wx
 
 Must Do:
 
-1. Reference to Frame_Tasklist frame.
-2. Getter and setter methods to pass data from Frame_Tasklist frame.
+1. Reference to Frame_Tasklist frame. = I think this is not needed anymore.
+2. Getter and setter methods to pass data from Frame_Tasklist frame. = I think this is not needed anymore.
 3. Put timestamp in Date boxes like in making an entry or marking entry as done. = Done!!
-4. Change 24-hour format to 12-hour format in timestamp values.
-5. Change sizes of the date boxes.
+4. Change 24-hour format to 12-hour format in timestamp values. = DONE!
+5. Change sizes of the date boxes. = DONE!
 
 """
 
@@ -74,7 +74,7 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         self.label_datecreated = label_datecreated
         
         grid_sizer_1.Add(label_datecreated, 0, wx.ALIGN_RIGHT | wx.ALL, 10)
-        grid_sizer_1.Add(self.text_ctrl_datecreated, 0, 0, 0)
+        grid_sizer_1.Add(self.text_ctrl_datecreated, 0, wx.ALL | wx.EXPAND, 10)
         label_datedone = wx.StaticText(self, wx.ID_ANY, "Date Done")
         
         # Get a reference for the label_datedone widget.
@@ -82,7 +82,7 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         self.label_datedone = label_datedone
         
         grid_sizer_1.Add(label_datedone, 0, wx.ALIGN_RIGHT | wx.ALL, 10)
-        grid_sizer_1.Add(self.text_ctrl_datedone, 0, 0, 0)
+        grid_sizer_1.Add(self.text_ctrl_datedone, 0, wx.ALL | wx.EXPAND, 10)
         sizer_5.Add(grid_sizer_1, 1, wx.EXPAND, 0)
         sizer_5.Add(self.checkbox_done, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         label_status = wx.StaticText(self, wx.ID_ANY, "label_1")
@@ -143,7 +143,7 @@ class Dialog_Add_Edit_Task(wx.Dialog):
             """
             
             dateToday = datetime.today()
-            strDateToday = dateToday.strftime("%m-%d-%Y %H:%M")
+            strDateToday = dateToday.strftime("%m-%d-%Y %I:%M %p")
             self.text_ctrl_datecreated.ChangeValue(strDateToday)
             
         elif given == 'Change task entry':
