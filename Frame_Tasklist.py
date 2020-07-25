@@ -17,8 +17,10 @@ import wx
 
 Must Do:
 
-1. Save and load data from SQLite database.
-2. Maybe a text file would be better because an SQL database might be too much for this app.
+1. Save and load data from SQLite database. = No, I used a text file. Done!
+2. Maybe a text file would be better because an SQL database might be too much for this app. = Yes!
+3. I have to add a hidden or squished column in the ListCtrl for the dates. I think both
+date created and date done must be added, but hidden.
 
 """
 
@@ -239,4 +241,45 @@ class Frame_Tasklist(wx.Frame):
         
         """
 
+        """
+        New add entry algorithm with saving in a text file.
+        """
+        
+        saveFile = open('generictask.savefile', 'w')
+        
+        """
+        Save the existing entries in the ListCtrl.
+        """
+
+        for counter in range(self.list_ctrl_tasks.GetItemCount()):
+            currentItem = self.list_ctrl_tasks.GetItem(counter, 1)
+            taskDescription = currentItem.GetText()
+            currentItem = self.list_ctrl_tasks.GetItem(counter, 2)
+            status = currentItem.GetText()
+            newEntry = '0{-9}' + taskDescription + '{-9}' + status + '\n'
+            saveFile.write(newEntry)
+            
+        # Write the new entry in the file.
+        
+        taskDescription = self.dialog_add_edit_task.text_ctrl_taskdescription.GetLineText(0)
+        status = 'On-going'
+        newEntry = '0{-9}' + taskDescription + '{-9}' + status + '\n'
+        saveFile.write(newEntry)
+        saveFile.close()
+        
+        totalEntries = self.list_ctrl_tasks.GetItemCount()
+        strTotalEntries = str(totalEntries)
+        
+        self.list_ctrl_tasks.InsertItem(totalEntries, strTotalEntries)
+        
+        # Put a row using SetItem() for the remaining columns.
+        
+        # For the task description.
+        
+        self.list_ctrl_tasks.SetItem(totalEntries, 1, taskDescription)
+        
+        # For the status.
+        
+        self.list_ctrl_tasks.SetItem(totalEntries, 2, "On-going")
+        
 # end of class Frame_Tasklist
