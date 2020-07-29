@@ -20,7 +20,8 @@ Must Do:
 1. Save and load data from SQLite database. = No, I used a text file. Done!
 2. Maybe a text file would be better because an SQL database might be too much for this app. = Yes!
 3. I have to add a hidden or squished column in the ListCtrl for the dates. I think both
-date created and date done must be added, but hidden.
+date created and date done must be added, but hidden. = Done!
+4. Add the Date created and the Date done values in the required methods.
 
 """
 
@@ -31,7 +32,7 @@ class Frame_Tasklist(wx.Frame):
         # begin wxGlade: Frame_Tasklist.__init__
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        self.SetSize((859, 409))
+        self.SetSize((960, 409))
         
         # Menu Bar
         self.frame_tasklist_menubar = wx.MenuBar()
@@ -87,8 +88,10 @@ class Frame_Tasklist(wx.Frame):
         self.SetTitle("Task Management")
         self.Hide()
         self.list_ctrl_tasks.AppendColumn("Task ID", format=wx.LIST_FORMAT_LEFT, width=1)
-        self.list_ctrl_tasks.AppendColumn("Task Description", format=wx.LIST_FORMAT_LEFT, width=782)
+        self.list_ctrl_tasks.AppendColumn("Task Description", format=wx.LIST_FORMAT_LEFT, width=582)
         self.list_ctrl_tasks.AppendColumn("Status", format=wx.LIST_FORMAT_LEFT, width=140)
+        self.list_ctrl_tasks.AppendColumn("Date created", format=wx.LIST_FORMAT_LEFT, width=140)        
+        self.list_ctrl_tasks.AppendColumn("Date done", format=wx.LIST_FORMAT_LEFT, width=140)
         # end wxGlade
 
     def __do_layout(self):
@@ -256,30 +259,51 @@ class Frame_Tasklist(wx.Frame):
             taskDescription = currentItem.GetText()
             currentItem = self.list_ctrl_tasks.GetItem(counter, 2)
             status = currentItem.GetText()
-            newEntry = '0{-9}' + taskDescription + '{-9}' + status + '\n'
+            newEntry = '0{-9}' + taskDescription + '{-9}' + status
             saveFile.write(newEntry)
             
         # Write the new entry in the file.
         
         taskDescription = self.dialog_add_edit_task.text_ctrl_taskdescription.GetLineText(0)
         status = 'On-going'
-        newEntry = '0{-9}' + taskDescription + '{-9}' + status + '\n'
+        newEntry = '0{-9}' + taskDescription + '{-9}' + status
         saveFile.write(newEntry)
         saveFile.close()
         
-        totalEntries = self.list_ctrl_tasks.GetItemCount()
-        strTotalEntries = str(totalEntries)
+        """
+        I will go to the re-open file and put all contents in the ListCtrl route for the refresh.
+        No need for massive optimization for this type of program.
+        """
         
-        self.list_ctrl_tasks.InsertItem(totalEntries, strTotalEntries)
+        self.loadSaveFile()
         
-        # Put a row using SetItem() for the remaining columns.
+    """
+    Open the save file, remove all the contents of the ListCtrl, and put the save file contents
+    as the new data. Very useful as a refresh method. :)
+    """
         
-        # For the task description.
+    def loadSaveFile(self):
         
-        self.list_ctrl_tasks.SetItem(totalEntries, 1, taskDescription)
+        self.list_ctrl_tasks.DeleteAllItems()
+        counter = 0
+        with open('generictask.savefile') as saveFile:
+            for currentEntry in saveFile:
+                listEntry = currentEntry.split('{-9}')
+                strTotalEntries = str(counter)
+                self.list_ctrl_tasks.InsertItem(counter, listEntry[0])
         
-        # For the status.
+                # Put a row using SetItem() for the remaining columns.
         
-        self.list_ctrl_tasks.SetItem(totalEntries, 2, "On-going")
+                # For the task description.
+        
+                self.list_ctrl_tasks.SetItem(counter, 1, listEntry[1])
+                
+                # For the status.
+                
+                self.list_ctrl_tasks.SetItem(counter, 2, listEntry[2])
+                
+                counter = counter + 1
+                
+        
         
 # end of class Frame_Tasklist

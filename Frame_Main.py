@@ -79,6 +79,7 @@ class Frame_Main(wx.Frame):
         Open the main star of the app: The instance of Frame_Tasklist!
         """
 
+        self.frame_tasklist.loadSaveFile()
         self.frame_tasklist.Show(True)
         self.Show(False)
 
