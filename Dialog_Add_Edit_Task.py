@@ -142,9 +142,22 @@ class Dialog_Add_Edit_Task(wx.Dialog):
             24-hour format.
             """
             
-            dateToday = datetime.today()
-            strDateToday = dateToday.strftime("%m-%d-%Y %I:%M %p")
+            """
+            
+            I am showing the date in a user-friendly format and it might not be practical to store
+            it in the save file. Some information might get lost if I do that like the seconds or
+            other intervals. I will use a separate attribute to store what the datetime.today() has 
+            and that will be stored in the text file.
+            
+            """        
+            
+            self.dateToday = datetime.today()
+            strDateToday = self.dateToday.strftime("%m-%d-%Y %I:%M %p")
             self.text_ctrl_datecreated.ChangeValue(strDateToday)
+            
+
+            
+            
             
         elif given == 'Change task entry':
             self.label_datecreated.Show()
