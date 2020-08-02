@@ -26,6 +26,8 @@ date created and date done must be added, but hidden. = Done!
 """
 
 from Dialog_Add_Edit_Task import Dialog_Add_Edit_Task
+from pathlib import Path
+from datetime import datetime
 
 class Frame_Tasklist(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -88,6 +90,11 @@ class Frame_Tasklist(wx.Frame):
         self.SetTitle("Task Management")
         self.Hide()
         self.list_ctrl_tasks.AppendColumn("Task ID", format=wx.LIST_FORMAT_LEFT, width=1)
+        
+        # Add a new hidden column to store actual datetime value.
+        
+        self.list_ctrl_tasks.AppendColumn("datetime", format=wx.LIST_FORMAT_LEFT, width=1)
+        
         self.list_ctrl_tasks.AppendColumn("Task Description", format=wx.LIST_FORMAT_LEFT, width=582)
         self.list_ctrl_tasks.AppendColumn("Status", format=wx.LIST_FORMAT_LEFT, width=140)
         self.list_ctrl_tasks.AppendColumn("Date created", format=wx.LIST_FORMAT_LEFT, width=140)        
@@ -199,7 +206,7 @@ class Frame_Tasklist(wx.Frame):
             useful for systems with lots of memory, but can be in older systems.
             """            
             
-            dialog_inform_remove.Destory()        
+            dialog_inform_remove.Destroy()        
 
     """
     The routine to add the data in the List widget. The code might become big later and putting
@@ -255,18 +262,28 @@ class Frame_Tasklist(wx.Frame):
         """
 
         for counter in range(self.list_ctrl_tasks.GetItemCount()):
+            
+            # Remember, the created date is after the Task ID column, 0.
+            
             currentItem = self.list_ctrl_tasks.GetItem(counter, 1)
-            taskDescription = currentItem.GetText()
+            currentCreatedDate = currentItem.GetText()
             currentItem = self.list_ctrl_tasks.GetItem(counter, 2)
+            taskDescription = currentItem.GetText()
+            currentItem = self.list_ctrl_tasks.GetItem(counter, 3)
             status = currentItem.GetText()
-            newEntry = '0{-9}' + taskDescription + '{-9}' + status
+            newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + currentCreatedDate
             saveFile.write(newEntry)
             
         # Write the new entry in the file.
         
         taskDescription = self.dialog_add_edit_task.text_ctrl_taskdescription.GetLineText(0)
         status = 'On-going'
-        newEntry = '0{-9}' + taskDescription + '{-9}' + status
+        
+        # Grab the new date from dialog_add_edit_task.
+        
+        currentCreatedDate = self.dialog_add_edit_task.dateToday
+        
+        newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + str(currentCreatedDate)
         saveFile.write(newEntry)
         saveFile.close()
         
@@ -286,23 +303,55 @@ class Frame_Tasklist(wx.Frame):
         
         self.list_ctrl_tasks.DeleteAllItems()
         counter = 0
-        with open('generictask.savefile') as saveFile:
-            for currentEntry in saveFile:
-                listEntry = currentEntry.split('{-9}')
-                strTotalEntries = str(counter)
-                self.list_ctrl_tasks.InsertItem(counter, listEntry[0])
-        
-                # Put a row using SetItem() for the remaining columns.
-        
-                # For the task description.
-        
-                self.list_ctrl_tasks.SetItem(counter, 1, listEntry[1])
-                
-                # For the status.
-                
-                self.list_ctrl_tasks.SetItem(counter, 2, listEntry[2])
-                
-                counter = counter + 1
+        filePath = Path('./generictask.savefile')
+        if filePath.exists():
+            with open('generictask.savefile') as saveFile:
+                for currentEntry in saveFile:
+                    listEntry = currentEntry.split('{-9}')
+                    strTotalEntries = str(counter)
+                    self.list_ctrl_tasks.InsertItem(counter, listEntry[0])
+            
+                    # Put a row using SetItem() for the remaining columns.
+            
+                    # datetime in hidden column.
+                    
+                    self.list_ctrl_tasks.SetItem(counter, 1, listEntry[3])
+            
+                    # For the task description.
+            
+                    self.list_ctrl_tasks.SetItem(counter, 2, listEntry[1])
+                    
+                    # For the status.
+                    
+                    self.list_ctrl_tasks.SetItem(counter, 3, listEntry[2])
+                    
+                    """ 
+                    For datetime in user-friendly format.
+                    
+                    I spent more time in this part because it gave brutal errors without any 
+                    clues! I figured that I have to remove preceeding and trailing spaces
+                    from the string values because I experienced something like this problem
+                    from my previous programs. 
+                    
+                    """
+                    
+                    temp = listEntry[3].rstrip()
+                    temp = temp.lstrip()
+                    
+                    """
+                    
+                    I found the format string of strptime from this site.
+                    
+                    https://stackabuse.com/converting-strings-to-datetime-in-python/
+                    
+                    """
+                    
+                    dateCreated = datetime.strptime(temp, '%Y-%m-%d %H:%M:%S.%f')
+
+                    userFriendlyDateCreated = dateCreated.strftime("%m-%d-%Y %I:%M %p")
+                    self.list_ctrl_tasks.SetItem(counter, 4, userFriendlyDateCreated)
+                    
+                    counter = counter + 1
                 
         
         
