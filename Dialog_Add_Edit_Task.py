@@ -15,10 +15,11 @@ import wx
 Must Do:
 
 1. Reference to Frame_Tasklist frame. = I think this is not needed anymore.
-2. Getter and setter methods to pass data from Frame_Tasklist frame. = I think this is not needed anymore.
+2. Getter and setter methods to pass data from Frame_Tasklist frame. = I think this is not needed anymore. No, this is still needed and DONE!!
 3. Put timestamp in Date boxes like in making an entry or marking entry as done. = Done!!
 4. Change 24-hour format to 12-hour format in timestamp values. = DONE!
 5. Change sizes of the date boxes. = DONE!
+6. Focus on the Change Task operation.
 
 """
 
@@ -166,4 +167,22 @@ class Dialog_Add_Edit_Task(wx.Dialog):
             self.text_ctrl_datedone.Show()            
             self.checkbox_done.Show()
             
+    # Setter method to assign existing values from selected row in the required boxes.        
+            
+    def setSelectedEntry(self, givenSelectedRow, givenTaskDescription, givenStatus, givenDateCreated, givenDateDone, givenHiddenDateCreated, givenHiddenDateDone):
+        
+        self.taskDescription = givenTaskDescription
+        self.status = givenStatus
+        self.dateCreated = givenDateCreated
+        self.dateDone = givenDateDone
+        self.hiddenDateCreated = givenHiddenDateCreated
+        self.hiddenDateDone = givenHiddenDateDone
+        self.selectedRow = givenSelectedRow
+        
+        # Put the values in the boxes.
+        
+        self.text_ctrl_datecreated.ChangeValue(self.dateCreated)
+        self.text_ctrl_datedone.ChangeValue(self.dateDone)
+        self.text_ctrl_taskdescription.ChangeValue(self.taskDescription)
+        
 # end of class Dialog_Add_Edit_Task

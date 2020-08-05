@@ -128,6 +128,7 @@ class Frame_Tasklist(wx.Frame):
     def menuitem_changetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         
         self.dialog_add_edit_task.set_operation("Change task entry")
+        self.setSelectedEntry()
         self.dialog_add_edit_task.ShowModal()
 
     def menuitem_removetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
@@ -155,6 +156,7 @@ class Frame_Tasklist(wx.Frame):
     def button_change_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         
         self.dialog_add_edit_task.set_operation("Change task entry")
+        self.setSelectedEntry()
         self.dialog_add_edit_task.ShowModal()
 
     def button_remove_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
@@ -352,7 +354,24 @@ class Frame_Tasklist(wx.Frame):
                     self.list_ctrl_tasks.SetItem(counter, 4, userFriendlyDateCreated)
                     
                     counter = counter + 1
-                
         
+    # Collect selected entry details and assign them in Dialog_Add_Edit_Task instance as a 'change' operation.
+                
+    def setSelectedEntry(self):
+        
+        #selectedRow = self.list_ctrl_tasks.GetFocusedItem()
+        selectedRow = self.list_ctrl_tasks.GetFirstSelected()
+        if selectedRow > -1:
+            
+            # No need for the 0th index of the row because that is only a zero for now.
+            
+            hiddenActualDateCreated = self.list_ctrl_tasks.GetItemText(selectedRow, 1)
+            taskDescription = self.list_ctrl_tasks.GetItemText(selectedRow, 2)
+            status = self.list_ctrl_tasks.GetItemText(selectedRow, 3)
+            dateCreated = self.list_ctrl_tasks.GetItemText(selectedRow, 4)
+            hiddenActualDateDone = "^_^"
+            dateDone = "O_o"
+            
+            self.dialog_add_edit_task.setSelectedEntry(selectedRow, taskDescription, status, dateCreated, dateDone, hiddenActualDateCreated, hiddenActualDateDone)
         
 # end of class Frame_Tasklist
