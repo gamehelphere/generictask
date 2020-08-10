@@ -102,13 +102,15 @@ class Dialog_Add_Edit_Task(wx.Dialog):
 
     def button_ok_click(self, event):  # wxGlade: Dialog_Add_Edit_Task.<event_handler>
 
-        if(self.text_ctrl_taskdescription.GetLineLength(0) > 0): 
+        if(self.text_ctrl_taskdescription.GetLineLength(0) > 0):
+            self.operation_applied = True
             self.Close()
         else:
             self.label_status.SetLabel(">>> Task Description is empty. <<<")
 
     def button_cancel_click(self, event):  # wxGlade: Dialog_Add_Edit_Task.<event_handler>
-
+        
+        self.operation_applied = False
         self.Close()
 
     def set_operation(self, given):
@@ -156,9 +158,6 @@ class Dialog_Add_Edit_Task(wx.Dialog):
             strDateToday = self.dateToday.strftime("%m-%d-%Y %I:%M %p")
             self.text_ctrl_datecreated.ChangeValue(strDateToday)
             
-
-            
-            
             
         elif given == 'Change task entry':
             self.label_datecreated.Show()
@@ -184,5 +183,13 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         self.text_ctrl_datecreated.ChangeValue(self.dateCreated)
         self.text_ctrl_datedone.ChangeValue(self.dateDone)
         self.text_ctrl_taskdescription.ChangeValue(self.taskDescription)
+        
+     # Rather than put many logic in the close button, this method will be called by the caller to get the updated values of the TextEntry(s).   
+        
+    def reflectChanges(self):
+         
+         self.taskDescription = self.text_ctrl_taskdescription.GetLineText(0)
+         
+         # More attributes will be added in this method when the done checkbox is checked.
         
 # end of class Dialog_Add_Edit_Task

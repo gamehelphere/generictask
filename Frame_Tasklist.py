@@ -94,11 +94,12 @@ class Frame_Tasklist(wx.Frame):
         # Add a new hidden column to store actual datetime value.
         
         self.list_ctrl_tasks.AppendColumn("datetime", format=wx.LIST_FORMAT_LEFT, width=1)
-        
+
         self.list_ctrl_tasks.AppendColumn("Task Description", format=wx.LIST_FORMAT_LEFT, width=582)
         self.list_ctrl_tasks.AppendColumn("Status", format=wx.LIST_FORMAT_LEFT, width=140)
         self.list_ctrl_tasks.AppendColumn("Date created", format=wx.LIST_FORMAT_LEFT, width=140)        
         self.list_ctrl_tasks.AppendColumn("Date done", format=wx.LIST_FORMAT_LEFT, width=140)
+        
         # end wxGlade
 
     def __do_layout(self):
@@ -112,7 +113,8 @@ class Frame_Tasklist(wx.Frame):
         sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_3)
         self.Layout()
-        self.Centre()
+        self.Centre()   
+        
         # end wxGlade
 
     def menuitem_action_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
@@ -127,9 +129,18 @@ class Frame_Tasklist(wx.Frame):
 
     def menuitem_changetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         
-        self.dialog_add_edit_task.set_operation("Change task entry")
-        self.setSelectedEntry()
-        self.dialog_add_edit_task.ShowModal()
+        focusedItem = self.list_ctrl_tasks.GetFocusedItem()
+        if(focusedItem != -1):
+            if(self.list_ctrl_tasks.IsSelected(focusedItem)):
+                self.dialog_add_edit_task.set_operation("Change task entry")
+                self.setSelectedEntry()
+                self.dialog_add_edit_task.ShowModal()
+                if self.dialog_add_edit_task.operation_applied:
+                    self.applyChanges()
+            else:
+                print("Focused!")
+                dialog_inform_change = wx.MessageDialog(self, "Please click a task to change.", "Reminder", wx.OK|wx.ICON_WARNING)
+                result = dialog_inform_change.ShowModal()
 
     def menuitem_removetask_click(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         print("Event handler 'menuitem_removetask_click' not implemented!")
@@ -155,9 +166,18 @@ class Frame_Tasklist(wx.Frame):
 
     def button_change_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         
-        self.dialog_add_edit_task.set_operation("Change task entry")
-        self.setSelectedEntry()
-        self.dialog_add_edit_task.ShowModal()
+        focusedItem = self.list_ctrl_tasks.GetFocusedItem()
+        if(focusedItem != -1):
+            if(self.list_ctrl_tasks.IsSelected(focusedItem)):
+                self.dialog_add_edit_task.set_operation("Change task entry")
+                self.setSelectedEntry()
+                self.dialog_add_edit_task.ShowModal()
+                if self.dialog_add_edit_task.operation_applied:
+                    self.applyChanges()
+            else:
+                print("Focused!")
+                dialog_inform_change = wx.MessageDialog(self, "Please click a task to change.", "Reminder", wx.OK|wx.ICON_WARNING)
+                result = dialog_inform_change.ShowModal()
 
     def button_remove_task(self, event):  # wxGlade: Frame_Tasklist.<event_handler>
         
@@ -347,7 +367,7 @@ class Frame_Tasklist(wx.Frame):
                     https://stackabuse.com/converting-strings-to-datetime-in-python/
                     
                     """
-                    
+
                     dateCreated = datetime.strptime(temp, '%Y-%m-%d %H:%M:%S.%f')
 
                     userFriendlyDateCreated = dateCreated.strftime("%m-%d-%Y %I:%M %p")
@@ -373,5 +393,35 @@ class Frame_Tasklist(wx.Frame):
             dateDone = "O_o"
             
             self.dialog_add_edit_task.setSelectedEntry(selectedRow, taskDescription, status, dateCreated, dateDone, hiddenActualDateCreated, hiddenActualDateDone)
+        
+    """
+    Get the changes and apply them in the ListCtrl.
+    """
+    
+    def applyChanges(self):
+        
+        self.dialog_add_edit_task.reflectChanges()
+        self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 2, self.dialog_add_edit_task.taskDescription)
+        
+        saveFile = open('generictask.savefile', 'w')
+        
+        """
+        Save the existing entries in the ListCtrl.
+        """
+
+        for counter in range(self.list_ctrl_tasks.GetItemCount()):
+            
+            # Remember, the created date is after the Task ID column, 0.
+            
+            currentItem = self.list_ctrl_tasks.GetItem(counter, 1)
+            currentCreatedDate = currentItem.GetText()
+            currentItem = self.list_ctrl_tasks.GetItem(counter, 2)
+            taskDescription = currentItem.GetText()
+            currentItem = self.list_ctrl_tasks.GetItem(counter, 3)
+            status = currentItem.GetText()
+            newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + currentCreatedDate
+            saveFile.write(newEntry)        
+        
+        saveFile.close()
         
 # end of class Frame_Tasklist
