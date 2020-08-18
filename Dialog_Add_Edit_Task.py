@@ -43,6 +43,11 @@ class Dialog_Add_Edit_Task(wx.Dialog):
 
         self.Bind(wx.EVT_BUTTON, self.button_ok_click, self.button_ok)
         self.Bind(wx.EVT_BUTTON, self.button_cancel_click, self.button_cancel)
+        
+        # Attach an event handler for the CheckBox widget.
+        
+        self.Bind(wx.EVT_CHECKBOX, self.checkbox_done_click, self.checkbox_done)
+        
         # end wxGlade
 
     def __set_properties(self):
@@ -111,7 +116,24 @@ class Dialog_Add_Edit_Task(wx.Dialog):
     def button_cancel_click(self, event):  # wxGlade: Dialog_Add_Edit_Task.<event_handler>
         
         self.operation_applied = False
+        self.dateDone = ""
+        self.text_ctrl_datedone.ChangeValue("")
         self.Close()
+
+    def checkbox_done_click(self, event):
+        
+        if self.checkbox_done.GetValue():
+            
+            self.dateDone = datetime.today()
+            strDateDone = self.dateDone.strftime("%m-%d-%Y %I:%M %p")
+            self.text_ctrl_datedone.ChangeValue(strDateDone)
+            self.status = 'Completed'
+        
+        else:
+            
+            self.dateDone = "undefined"
+            self.text_ctrl_datedone.ChangeValue("")
+            self.status = 'On-going'
 
     def set_operation(self, given):
         self.operation = given
@@ -191,5 +213,7 @@ class Dialog_Add_Edit_Task(wx.Dialog):
          self.taskDescription = self.text_ctrl_taskdescription.GetLineText(0)
          
          # More attributes will be added in this method when the done checkbox is checked.
+         
+         self.dateDone = str(self.dateDone)
         
 # end of class Dialog_Add_Edit_Task
