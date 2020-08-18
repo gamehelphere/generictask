@@ -91,9 +91,13 @@ class Frame_Tasklist(wx.Frame):
         self.Hide()
         self.list_ctrl_tasks.AppendColumn("Task ID", format=wx.LIST_FORMAT_LEFT, width=1)
         
-        # Add a new hidden column to store actual datetime value.
+        # Add a new hidden column to store actual datetime created value.
         
-        self.list_ctrl_tasks.AppendColumn("datetime", format=wx.LIST_FORMAT_LEFT, width=1)
+        self.list_ctrl_tasks.AppendColumn("datetimecreated", format=wx.LIST_FORMAT_LEFT, width=1)
+
+        # Add a new hidden column to store actual datetime done value.
+        
+        self.list_ctrl_tasks.AppendColumn("datetimedone", format=wx.LIST_FORMAT_LEFT, width=1)
 
         self.list_ctrl_tasks.AppendColumn("Task Description", format=wx.LIST_FORMAT_LEFT, width=582)
         self.list_ctrl_tasks.AppendColumn("Status", format=wx.LIST_FORMAT_LEFT, width=140)
@@ -289,11 +293,17 @@ class Frame_Tasklist(wx.Frame):
             
             currentItem = self.list_ctrl_tasks.GetItem(counter, 1)
             currentCreatedDate = currentItem.GetText()
+            
+            # New column to save is the done date that is after the created date column.
+            
             currentItem = self.list_ctrl_tasks.GetItem(counter, 2)
-            taskDescription = currentItem.GetText()
+            currentDoneDate = currentItem.GetText()
+            
             currentItem = self.list_ctrl_tasks.GetItem(counter, 3)
+            taskDescription = currentItem.GetText()
+            currentItem = self.list_ctrl_tasks.GetItem(counter, 4)
             status = currentItem.GetText()
-            newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + currentCreatedDate
+            newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + currentCreatedDate + '{-9}' + currentDoneDate + '\n'
             saveFile.write(newEntry)
             
         # Write the new entry in the file.
@@ -305,7 +315,9 @@ class Frame_Tasklist(wx.Frame):
         
         currentCreatedDate = self.dialog_add_edit_task.dateToday
         
-        newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + str(currentCreatedDate)
+        # The done date is still unknown, so it will be given as 'undefined'. It will be connected with the splitter token in the front and newline at the end for saving.
+        
+        newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + str(currentCreatedDate) + '{-9}undefined\n'
         saveFile.write(newEntry)
         saveFile.close()
         
@@ -335,17 +347,24 @@ class Frame_Tasklist(wx.Frame):
             
                     # Put a row using SetItem() for the remaining columns.
             
-                    # datetime in hidden column.
+                    # datetime created in hidden column.
                     
                     self.list_ctrl_tasks.SetItem(counter, 1, listEntry[3])
+                    
+                    # datetime done in hidden column. Get rid of unwanted characters like front or end spaces, and carriage-return or newline characters.
+                    
+                    temp = listEntry[4].lstrip()
+                    temp = temp.rstrip()
+                    
+                    self.list_ctrl_tasks.SetItem(counter, 2, temp)
             
                     # For the task description.
             
-                    self.list_ctrl_tasks.SetItem(counter, 2, listEntry[1])
+                    self.list_ctrl_tasks.SetItem(counter, 3, listEntry[1])
                     
                     # For the status.
                     
-                    self.list_ctrl_tasks.SetItem(counter, 3, listEntry[2])
+                    self.list_ctrl_tasks.SetItem(counter, 4, listEntry[2])
                     
                     """ 
                     For datetime in user-friendly format.
@@ -371,7 +390,19 @@ class Frame_Tasklist(wx.Frame):
                     dateCreated = datetime.strptime(temp, '%Y-%m-%d %H:%M:%S.%f')
 
                     userFriendlyDateCreated = dateCreated.strftime("%m-%d-%Y %I:%M %p")
-                    self.list_ctrl_tasks.SetItem(counter, 4, userFriendlyDateCreated)
+                    self.list_ctrl_tasks.SetItem(counter, 5, userFriendlyDateCreated)
+                    
+                    # Load the done date and make checks if the value is undefined or not.
+                    # This is redundant because it was already done earlier. I will optimize this in the upcoming code changes.
+                    
+                    temp = listEntry[4].rstrip()
+                    temp = temp.lstrip()
+
+                    if temp != 'undefined':
+                        dateDone = datetime.strptime(temp, '%Y-%m-%d %H:%M:%S.%f')
+                        userFriendlyDateDone = dateDone.strftime('%m-%d-%Y %I:%M %p')
+                        self.list_ctrl_tasks.SetItem(counter, 6, userFriendlyDateCreated)
+                    
                     
                     counter = counter + 1
         
@@ -386,11 +417,15 @@ class Frame_Tasklist(wx.Frame):
             # No need for the 0th index of the row because that is only a zero for now.
             
             hiddenActualDateCreated = self.list_ctrl_tasks.GetItemText(selectedRow, 1)
-            taskDescription = self.list_ctrl_tasks.GetItemText(selectedRow, 2)
-            status = self.list_ctrl_tasks.GetItemText(selectedRow, 3)
-            dateCreated = self.list_ctrl_tasks.GetItemText(selectedRow, 4)
-            hiddenActualDateDone = "^_^"
-            dateDone = "O_o"
+            taskDescription = self.list_ctrl_tasks.GetItemText(selectedRow, 3)
+            status = self.list_ctrl_tasks.GetItemText(selectedRow, 4)
+            dateCreated = self.list_ctrl_tasks.GetItemText(selectedRow, 5)
+            hiddenActualDateDone = self.list_ctrl_tasks.GetItemText(selectedRow, 2)
+            #dateDone = "O_o"
+            dateDone = ''
+            if hiddenActualDateDone != 'undefined':
+                dateDoneTemp = datetime.strptime(hiddenActualDateDone, '%Y-%m-%d %H:%M:%S.%f')
+                dateDone = dateDoneTemp.strftime('%m-%d-%Y %I:%M %p')
             
             self.dialog_add_edit_task.setSelectedEntry(selectedRow, taskDescription, status, dateCreated, dateDone, hiddenActualDateCreated, hiddenActualDateDone)
         
@@ -401,8 +436,9 @@ class Frame_Tasklist(wx.Frame):
     def applyChanges(self):
         
         self.dialog_add_edit_task.reflectChanges()
-        self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 2, self.dialog_add_edit_task.taskDescription)
-        
+        self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 3, self.dialog_add_edit_task.taskDescription)
+        self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 2, self.dialog_add_edit_task.dateDone)
+        self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 4, self.dialog_add_edit_task.status)
         saveFile = open('generictask.savefile', 'w')
         
         """
@@ -415,11 +451,17 @@ class Frame_Tasklist(wx.Frame):
             
             currentItem = self.list_ctrl_tasks.GetItem(counter, 1)
             currentCreatedDate = currentItem.GetText()
+            
+            # Date done is in column 1.
+            
             currentItem = self.list_ctrl_tasks.GetItem(counter, 2)
-            taskDescription = currentItem.GetText()
+            currentDoneDate = currentItem.GetText()
+
             currentItem = self.list_ctrl_tasks.GetItem(counter, 3)
+            taskDescription = currentItem.GetText()
+            currentItem = self.list_ctrl_tasks.GetItem(counter, 4)
             status = currentItem.GetText()
-            newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + currentCreatedDate
+            newEntry = '0{-9}' + taskDescription + '{-9}' + status + '{-9}' + currentCreatedDate + '{-9}' + currentDoneDate + '\n'
             saveFile.write(newEntry)        
         
         saveFile.close()
