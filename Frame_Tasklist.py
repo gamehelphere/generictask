@@ -436,9 +436,14 @@ class Frame_Tasklist(wx.Frame):
     def applyChanges(self):
         
         self.dialog_add_edit_task.reflectChanges()
+        
+        # Update the ListCtrl with the new changes.
+        
         self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 3, self.dialog_add_edit_task.taskDescription)
-        self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 2, self.dialog_add_edit_task.dateDone)
+        self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 2, self.dialog_add_edit_task.hiddenDateDone)
         self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 4, self.dialog_add_edit_task.status)
+        self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 6, self.dialog_add_edit_task.dateDone)
+        
         saveFile = open('generictask.savefile', 'w')
         
         """
