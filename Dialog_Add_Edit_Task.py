@@ -124,14 +124,21 @@ class Dialog_Add_Edit_Task(wx.Dialog):
         
         if self.checkbox_done.GetValue():
             
-            self.dateDone = datetime.today()
-            strDateDone = self.dateDone.strftime("%m-%d-%Y %I:%M %p")
+            self.hiddenDateDone = datetime.today()
+            strDateDone = self.hiddenDateDone.strftime("%m-%d-%Y %I:%M %p")
+            
+            # Make the hiddenDateDone a String value to be used in applying changes in the ListCtrl.
+            
+            self.hiddenDateDone = str(self.hiddenDateDone)
+            
+            self.dateDone = strDateDone
             self.text_ctrl_datedone.ChangeValue(strDateDone)
             self.status = 'Completed'
         
         else:
             
-            self.dateDone = "undefined"
+            self.hiddenDateDone = "undefined"
+            self.dateDone = ''
             self.text_ctrl_datedone.ChangeValue("")
             self.status = 'On-going'
 
