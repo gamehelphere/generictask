@@ -401,7 +401,7 @@ class Frame_Tasklist(wx.Frame):
                     if temp != 'undefined':
                         dateDone = datetime.strptime(temp, '%Y-%m-%d %H:%M:%S.%f')
                         userFriendlyDateDone = dateDone.strftime('%m-%d-%Y %I:%M %p')
-                        self.list_ctrl_tasks.SetItem(counter, 6, userFriendlyDateCreated)
+                        self.list_ctrl_tasks.SetItem(counter, 6, userFriendlyDateDone)
                     
                     
                     counter = counter + 1
