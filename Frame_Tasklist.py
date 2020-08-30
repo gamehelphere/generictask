@@ -195,7 +195,6 @@ class Frame_Tasklist(wx.Frame):
     def remove_task(self):
         
         focusedItem = self.list_ctrl_tasks.GetFocusedItem()
-        print("Ang napili ay " + str(focusedItem))
         if(focusedItem != -1):
             if(self.list_ctrl_tasks.IsSelected(focusedItem)):
                 print("Focused!")
@@ -208,6 +207,10 @@ class Frame_Tasklist(wx.Frame):
                     """
                     
                     self.list_ctrl_tasks.DeleteItem(focusedItem)
+                    
+                    # The destructive part of the removal because changes are made to be permanent.
+                    
+                    self.saveChanges()
                     
                     dialog_inform_remove_final = wx.MessageDialog(self, "Entry removed successfully.", "Information", wx.OK_DEFAULT|wx.ICON_INFORMATION)
                     dialog_inform_remove_final.ShowModal()   
@@ -443,6 +446,15 @@ class Frame_Tasklist(wx.Frame):
         self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 2, self.dialog_add_edit_task.hiddenDateDone)
         self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 4, self.dialog_add_edit_task.status)
         self.list_ctrl_tasks.SetItem(self.dialog_add_edit_task.selectedRow, 6, self.dialog_add_edit_task.dateDone)
+        
+        self.saveChanges()
+        
+    """
+    First optimization for this app. Instead of putting the save code multiple times in different parts, I placed the code in a
+    method to be called by the required methods.
+    """    
+        
+    def saveChanges(self):
         
         saveFile = open('generictask.savefile', 'w')
         
